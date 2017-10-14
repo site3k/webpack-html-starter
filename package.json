@@ -1,5 +1,5 @@
 {
-  "name": "s3k-html-builder",
+  "name": "webpack-html-builder",
   "version": "1.0.0",
   "description": "html-buider,webpack",
   "main": "index.js",
