@@ -1,5 +1,5 @@
 {
-  "name": "webpack-html-builder",
+  "name": "webpack-html-starter",
   "version": "1.0.0",
   "description": "html-buider,webpack",
   "main": "index.js",

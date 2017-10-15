@@ -2,16 +2,7 @@ var webpackMerge = require('webpack-merge');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var commonConfig = require('./webpack.common.js');
 var helpers = require('./helpers');
-const extractVendorStyle = new ExtractTextPlugin({
-    filename: "vendor.[name].[contenthash].css",
-    disable: process.env.NODE_ENV === "development"
-});
-
-const extractAppStyle = new ExtractTextPlugin({
-    filename: "app.[name].[contenthash].css",
-    disable: process.env.NODE_ENV === "development"
-});
-
+const ENV = process.env.NODE_ENV = process.env.ENV = 'development';
 
 module.exports = webpackMerge(commonConfig, {
     devtool: 'cheap-module-eval-source-map',
@@ -24,9 +15,7 @@ module.exports = webpackMerge(commonConfig, {
     },
 
     plugins: [
-        new ExtractTextPlugin('[name].[hash].css'),
-        extractVendorStyle,
-        extractAppStyle
+        new ExtractTextPlugin('[name].[hash].css')
     ],
 
     devServer: {

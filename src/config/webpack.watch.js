@@ -3,17 +3,32 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var helpers = require('./helpers');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var webpack = require('webpack');
+var configs = require('./configs');
+var _ = require('lodash');
+
 
 const extractVendorStyle = new ExtractTextPlugin({
-    filename: "vendor.[hash].css",
-    disable: process.env.NODE_ENV === "development"
+    filename: "vendor.css"
 });
 
 const extractAppStyle = new ExtractTextPlugin({
-    filename: "app.[hash].css",
-    disable: process.env.NODE_ENV === "development"
+    filename: "app.css"
 });
 
+
+
+var plugins = _.concat([
+    new webpack.optimize.CommonsChunkPlugin({
+        name: ['app', 'vendor']
+    }),
+    new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery',
+        'window.jQuery': 'jquery'
+    }),
+    extractVendorStyle,
+    extractAppStyle
+], configs.pages);
 
 
 module.exports = {
@@ -43,40 +58,26 @@ module.exports = {
                 test: /\.css$/,
                 use: extractVendorStyle.extract({
                     fallback: "style-loader",
-                    use: {
-                        loader: "css-loader",
-                        options: {
-                            sourceMap: false,
-                            minimize: true
-                        }
-                    }
+                    use: "css-loader"
                 })
             },
             {
                 test: /\.scss$/,
                 use: extractAppStyle.extract({
                     fallback: 'style-loader',
-                    use: [{
-                        loader: "css-loader",
-                        options: {
-                            sourceMap: false,
-                            minimize: true
-                        }
-                    }, 'sass-loader']
+                    use: ["css-loader", 'sass-loader']
                 })
             },
             {
                 test: /\.(png|jpe?g|gif|svg|ico)$/,
-                loader: 'file-loader?name=assets/images/[name].[hash].[ext]'
+                loader: 'file-loader?name=[name].[ext]'
             },
             {
                 test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
                 use: [{
                     loader: 'file-loader',
                     options: {
-                        name: '[name].[hash].[ext]',
-                        outputPath: 'assets/fonts/',
-                        publicPath: '../'
+                        name: '[name].[ext]'
                     }
                 }]
             },
@@ -94,24 +95,5 @@ module.exports = {
             }
         ]
     },
-    plugins: [
-        new webpack.optimize.CommonsChunkPlugin({
-            name: ['app', 'vendor']
-        }),
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: './src/template/pages/index.pug'
-        }),
-        new HtmlWebpackPlugin({
-            filename: 'no-content.html',
-            template: './src/template/pages/no-content.pug'
-        }),
-        new webpack.ProvidePlugin({
-            $: 'jquery',
-            jQuery: 'jquery',
-            'window.jQuery': 'jquery'
-        }),
-        extractVendorStyle,
-        extractAppStyle
-    ]
+    plugins: plugins
 };
